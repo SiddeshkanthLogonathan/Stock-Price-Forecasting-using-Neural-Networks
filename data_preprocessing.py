@@ -38,4 +38,3 @@ class FinancialDataIterator:
 
 
 FData = FinancialDataLoader('NCLH')
-print(FData.get_dataset().tail())
