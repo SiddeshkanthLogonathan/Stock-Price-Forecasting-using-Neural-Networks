@@ -1,5 +1,6 @@
 import pandas as pd
 from pandas_datareader import data as wb
+import numpy as np
 
 class FinancialDataLoader:
     COLUMNS_TO_DROP = ['Adj Close']
@@ -25,3 +26,16 @@ class FinancialDataLoader:
         return self.dataset
 
 
+# TODO: Implement DataLoader if needed
+class FinancialDataIterator:
+    BATCH_SIZE = 10
+
+    def __init__(self, dataset):
+        self.data = dataset
+
+    def get_data(self):
+        return self.data
+
+
+FData = FinancialDataLoader('NCLH')
+print(FData.get_dataset().tail())
