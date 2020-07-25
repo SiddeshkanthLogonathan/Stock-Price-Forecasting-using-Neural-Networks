@@ -1,9 +1,6 @@
-import pandas as pd
 from pandas_datareader import data as wb
-import numpy as np
 from torch.utils.data import Dataset, DataLoader
 import torch 
-from d2l import mxnet as d2l
 
 class FinancialDataLoader(Dataset):
     COLUMNS_TO_DROP = ['Adj Close']
@@ -35,5 +32,25 @@ class FinancialDataLoader(Dataset):
         return self.dataset
 
 
-FData = FinancialDataLoader('NCLH')
-data_iter = DataLoader(FData, batch_size=10)
+class FinancialDataIterator():
+    BATCH_SIZE = 10
+    TRAIN_PERCENTAGE = 0.7
+    TEST_PERCENTAGE = 1 - TRAIN_PERCENTAGE
+
+    def __init__(self, dataset):
+        self.data = dataset
+
+    def partition_data(self, is_train):
+        data_length = len(self.data)
+        if is_train:
+            train_len = round(self.TRAIN_PERCENTAGE * data_length)
+            return self.data[0:train_len]
+        test_len = round(self.TEST_PERCENTAGE * data_length)
+        return self.data[-test_len:]
+
+
+# FData = FinancialDataLoader('NCLH')
+
+# data_iter = FinancialDataIterator(FData)
+# train_iter = data_iter.partition_data(is_train=True)
+# test_iter = data_iter.partition_data(is_train=False)
