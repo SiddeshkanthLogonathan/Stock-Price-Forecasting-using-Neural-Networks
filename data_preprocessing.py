@@ -31,8 +31,9 @@ class FinancialDataLoader(Dataset):
     def get_dataset(self):
         return self.dataset
 
+## TODO: Maybe export the index and columns data from a method
 
-class FinancialDataIterator():
+class FinancialDataIterator:
     BATCH_SIZE = 10
     TRAIN_PERCENTAGE = 0.7
     TEST_PERCENTAGE = 1 - TRAIN_PERCENTAGE
@@ -48,9 +49,3 @@ class FinancialDataIterator():
         test_len = round(self.TEST_PERCENTAGE * data_length)
         return self.data[-test_len:]
 
-
-# FData = FinancialDataLoader('NCLH')
-
-# data_iter = FinancialDataIterator(FData)
-# train_iter = data_iter.partition_data(is_train=True)
-# test_iter = data_iter.partition_data(is_train=False)
