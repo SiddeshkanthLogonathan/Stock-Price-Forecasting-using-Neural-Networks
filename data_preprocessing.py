@@ -1,8 +1,11 @@
 import pandas as pd
 from pandas_datareader import data as wb
 import numpy as np
+from torch.utils.data import Dataset, DataLoader
+import torch 
+from d2l import mxnet as d2l
 
-class FinancialDataLoader:
+class FinancialDataLoader(Dataset):
     COLUMNS_TO_DROP = ['Adj Close']
     COLUMNS_TO_NORMALIZE = ['Volume']
 
@@ -10,14 +13,20 @@ class FinancialDataLoader:
         self.dataset = self.query_data(ticker=ticker)
         self.drop_unnecessary_columns()
 
+    def __len__(self):
+        return len(self.dataset.index)
+
+    def __getitem__(self, idx):
+        return torch.tensor(self.dataset.values[idx])
+
     def query_data(self, ticker):
         return wb.DataReader(ticker, data_source='yahoo')
 
     def drop_unnecessary_columns(self):
         self.dataset.drop(self.COLUMNS_TO_DROP, axis=1, inplace=True)
 
-    def as_numpy_array(self):
-        return self.dataset.to_numpy()
+    def as_tensor(self):
+        return torch.tensor(self.dataset.values)
 
     def normalize_columns(self):
         pass
@@ -26,15 +35,5 @@ class FinancialDataLoader:
         return self.dataset
 
 
-# TODO: Implement DataLoader if needed
-class FinancialDataIterator:
-    BATCH_SIZE = 10
-
-    def __init__(self, dataset):
-        self.data = dataset
-
-    def get_data(self):
-        return self.data
-
-
 FData = FinancialDataLoader('NCLH')
+data_iter = DataLoader(FData, batch_size=10)
