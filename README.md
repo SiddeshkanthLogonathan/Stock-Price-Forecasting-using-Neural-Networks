@@ -6,3 +6,12 @@ Using Neural Networks for Financial Time Series Forecasting
 - torch
 - plotly
 - pandas
+- torch
+- argparse
+- sys
+
+
+Financial Time Series Forecasting is divided into four stages which starts with data_preprocessing by preprocessing the data following by using the model to train and test the data which follows by the visualization. 
+
+
+Execute the program with: `python main.py --ticker (INSERT TICKER)` 
