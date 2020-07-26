@@ -47,4 +47,3 @@ class FinancialDataIterator:
             return self.data[0:train_len]
         test_len = round(self.TEST_PERCENTAGE * data_length)
         return self.data[-test_len:]
-
