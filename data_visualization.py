@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import torch
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 
 class FinancialDataBuilder:
 
@@ -28,6 +28,26 @@ class FinancialDataVisualizer:
     def __init__(self, training_data, testing_data, FData_object):
         self.df = FinancialDataBuilder(training_data, testing_data, FData_object.get_dataset()).get_dataframe()
 
-    def visualize(self):
-        self.df.plot()
-        plt.show()
+    def visualize(self, title):
+        X_AXIS = self.df.index
+        column_names = list(self.df.columns)
+        fig = go.Figure()
+        self.add_plot(fig, x=X_AXIS, y=self.df[column_names[0]], name=column_names[0])
+        self.add_plot(fig, x=X_AXIS, y=self.df[column_names[1]], name=column_names[1])
+        self.beautify_plot(fig, title)
+        fig.show()
+
+    def add_plot(self, fig, x, y, name):
+        fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name=name))
+
+    def beautify_plot(self, fig, title):
+        fig.update_layout(
+            title=title + ' Pricing', 
+            xaxis_title='Date', 
+            yaxis_title='Price ($)', 
+            legend_title='*',
+            font=dict(
+                family="Courier New, Monospace",
+                size=18,
+                color="slategrey"
+            ))

@@ -31,7 +31,6 @@ class FinancialDataLoader(Dataset):
     def get_dataset(self):
         return self.dataset
 
-## TODO: Maybe export the index and columns data from a method
 
 class FinancialDataIterator:
     BATCH_SIZE = 10

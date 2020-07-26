@@ -8,7 +8,6 @@ def process_data(ticker):
     data_iter = FinancialDataIterator(FData)
     train_iter = data_iter.partition_data(is_train=True)
     test_iter = data_iter.partition_data(is_train=False)
-    ## TODO: return FData object
     return FData, train_iter, test_iter
 
 def main():
@@ -25,8 +24,7 @@ def main():
     test_data = curated_data[2]
 
     data_visualizer = FinancialDataVisualizer(train_data, test_data, FData_object)
-    data_visualizer.visualize()
-
+    data_visualizer.visualize(title=ticker)
 
 if __name__ == '__main__':
     main()
