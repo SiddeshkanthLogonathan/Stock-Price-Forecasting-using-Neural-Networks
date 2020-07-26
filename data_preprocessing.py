@@ -3,7 +3,7 @@ from torch.utils.data import Dataset, DataLoader
 import torch 
 
 class FinancialDataLoader(Dataset):
-    COLUMNS_TO_DROP = ['Adj Close']
+    COLUMNS_TO_DROP = ['Open', 'Volume', 'High', 'Low', 'Adj Close']
     COLUMNS_TO_NORMALIZE = ['Volume']
 
     def __init__(self, ticker):
