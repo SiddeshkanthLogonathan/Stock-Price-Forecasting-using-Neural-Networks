@@ -30,7 +30,7 @@ def main():
     ticker = args.ticker
     curated_data = process_data(ticker=ticker)
 
-    visualize_data(ticker=ticker, curated_data=curated_data)
+    # visualize_data(ticker=ticker, curated_data=curated_data)
 
 
 if __name__ == '__main__':
