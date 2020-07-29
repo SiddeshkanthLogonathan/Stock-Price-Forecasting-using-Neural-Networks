@@ -25,13 +25,9 @@ class FinancialDataLoader(Dataset):
         self.dataset.drop(self.COLUMNS_TO_DROP, axis=1, inplace=True)
 
     def as_tensor_list(self):
-        # col = self.dataset.columns
-        ## TODO: Store in an array and return it as a tensor, maybe it will work
-        # a = torch.tensor(self.dataset[col].values.astype(np.float32))
         storage = torch.zeros(len(self), dtype=torch.float32)
         for i in range(len(storage)):
             storage[i] = self[i]
-        
         return storage
 
     def normalize_columns(self):

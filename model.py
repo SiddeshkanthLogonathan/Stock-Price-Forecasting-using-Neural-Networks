@@ -1,26 +1,24 @@
 from d2l import torch as d2l
 import torch
 import torch.nn as nn
-from data_preprocessing import FinancialDataLoader
+from data_preprocessing import FinancialDataLoader, FinancialDataIterator
+from data_visualization import FinancialDataVisualizer
 
 data = FinancialDataLoader('NCLH')
 # print(data.as_tensor_list())
 # print(data[2:10])
-data = data.as_tensor_list()
+data_tensor = data.as_tensor_list()
 
 T = len(data)  # Generate a total of 1000 points
-time = torch.arange(0, T, dtype=torch.float32)
-x = torch.sin(0.01 * time) + torch.normal(0, 0.2, (T,))
-# print(x[3:7])
-tau = 4
-# print(x[3])
-# print(data[3:10])
+tau = 2
+
 features = torch.zeros((T-tau, tau))
 for i in range(tau):
-    features[:, i] = data[i: T-tau+i]
-labels = d2l.reshape(data[tau:], (-1, 1))
+    features[:, i] = data_tensor[i: T-tau+i]
+labels = d2l.reshape(data_tensor[tau:], (-1, 1))
 
-batch_size, n_train = 16, 600
+batch_size = 128
+train_length = round(0.7 * T)
 train_iter = d2l.load_array((features, labels), batch_size, is_train=True)
 
 # Function for initializing the weights of net
@@ -30,7 +28,7 @@ def init_weights(m):
 
 # Vanilla MLP architecture
 def get_net():
-    net = nn.Sequential(nn.Linear(4, 10),
+    net = nn.Sequential(nn.Linear(tau, 10),
                         nn.ReLU(),
                         nn.Linear(10, 1))
     net.apply(init_weights)
@@ -52,4 +50,7 @@ def train_net(net, train_iter, loss, epochs, lr):
 
 net = get_net()
 # print(net)
-train_net(net, train_iter, loss, 100, 0.1)
+train_net(net, train_iter, loss, 1000, 0.01)
+trained_data = torch.cat((data[0:tau], net(features)), dim=0)
+data_visualizer = FinancialDataVisualizer(trained_data.detach().numpy(), data)
+data_visualizer.visualize('NCLH')
