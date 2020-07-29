@@ -1,6 +1,7 @@
 from pandas_datareader import data as wb
 from torch.utils.data import Dataset, DataLoader
 import torch 
+import numpy as np
 
 # implement the preparation here: Tau and all
 class FinancialDataLoader(Dataset):
@@ -15,7 +16,7 @@ class FinancialDataLoader(Dataset):
         return len(self.dataset.index)
 
     def __getitem__(self, idx):
-        return torch.tensor(self.dataset.values[idx])
+        return torch.tensor(self.dataset.values[idx], dtype=torch.float32)
 
     def query_data(self, ticker):
         return wb.DataReader(ticker, data_source='yahoo')
@@ -23,8 +24,15 @@ class FinancialDataLoader(Dataset):
     def drop_unnecessary_columns(self):
         self.dataset.drop(self.COLUMNS_TO_DROP, axis=1, inplace=True)
 
-    def as_tensor(self):
-        return torch.tensor(self.dataset.values)
+    def as_tensor_list(self):
+        # col = self.dataset.columns
+        ## TODO: Store in an array and return it as a tensor, maybe it will work
+        # a = torch.tensor(self.dataset[col].values.astype(np.float32))
+        storage = torch.zeros(len(self), dtype=torch.float32)
+        for i in range(len(storage)):
+            storage[i] = self[i]
+        
+        return storage
 
     def normalize_columns(self):
         pass

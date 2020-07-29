@@ -1,32 +1,34 @@
-from data_preprocessing import FinancialDataLoader, FinancialDataIterator
-from torch.utils.data import Dataset, DataLoader
+from d2l import torch as d2l
 import torch
 import torch.nn as nn
-from d2l import mxnet as d2l
+from data_preprocessing import FinancialDataLoader
 
+data = FinancialDataLoader('NCLH')
+# print(data.as_tensor_list())
+# print(data[2:10])
+data = data.as_tensor_list()
 
-f_data = FinancialDataLoader(ticker='NCLH')
-data = f_data.as_tensor()
+T = len(data)  # Generate a total of 1000 points
+time = torch.arange(0, T, dtype=torch.float32)
+x = torch.sin(0.01 * time) + torch.normal(0, 0.2, (T,))
+# print(x[3:7])
+tau = 4
+# print(x[3])
+# print(data[3:10])
+features = torch.zeros((T-tau, tau))
+for i in range(tau):
+    features[:, i] = data[i: T-tau+i]
+labels = d2l.reshape(data[tau:], (-1, 1))
 
-# Move to data_preprocessing
-Tau = 4 # using the last 4 days to predict the fifth day
-T = len(f_data)
-features = torch.zeros((T - Tau, Tau))
+batch_size, n_train = 16, 600
+train_iter = d2l.load_array((features, labels), batch_size, is_train=True)
 
-for i in range(Tau):
-    features[:, i] = data[i:T-Tau+i, 0]
-
-labels = torch.reshape(data[Tau:], (-1,1))
-
-batch_size = 256
-
-# by calling this, it has to give me batches that I'm expecting
-data_loader = DataLoader(f_data, batch_size=10, shuffle=False) # this is the iterator
-
+# Function for initializing the weights of net
 def init_weights(m):
     if type(m) == nn.Linear:
         torch.nn.init.xavier_uniform_(m.weight)
 
+# Vanilla MLP architecture
 def get_net():
     net = nn.Sequential(nn.Linear(4, 10),
                         nn.ReLU(),
@@ -34,6 +36,7 @@ def get_net():
     net.apply(init_weights)
     return net
 
+# Least mean squares loss
 loss = nn.MSELoss()
 
 def train_net(net, train_iter, loss, epochs, lr):
@@ -48,4 +51,5 @@ def train_net(net, train_iter, loss, epochs, lr):
               f'loss: {d2l.evaluate_loss(net, train_iter, loss):f}')
 
 net = get_net()
-# train_net(net, train_iter, loss, 10, 0.01)
+# print(net)
+train_net(net, train_iter, loss, 100, 0.1)
