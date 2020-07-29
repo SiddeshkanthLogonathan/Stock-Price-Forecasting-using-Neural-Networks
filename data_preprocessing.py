@@ -42,8 +42,9 @@ class FinancialDataIterator:
     TRAIN_PERCENTAGE = 0.7
     TEST_PERCENTAGE = 1 - TRAIN_PERCENTAGE
 
-    def __init__(self, dataset):
-        self.data = dataset
+    def __init__(self, data_tensor, tau):
+        self.data = data_tensor
+        self.tau = tau
 
     def partition_data(self, is_train):
         data_length = len(self.data)
@@ -52,3 +53,12 @@ class FinancialDataIterator:
             return self.data[0:train_len]
         test_len = round(self.TEST_PERCENTAGE * data_length)
         return self.data[-test_len:]
+
+    def prepare_data(self, torch_data):
+        T = len(torch_data)
+        features = torch.zeros((T-self.tau, self.tau))
+        for i in range(self.tau):
+            features[:, i] = torch_data[i: T-self.tau+i]
+            labels = torch.reshape(torch_data[self.tau:], (-1, 1))
+
+        return features, labels

@@ -11,6 +11,10 @@ def process_data(ticker):
     test_iter = data_iter.partition_data(is_train=False)
     return FData, train_iter, test_iter
 
+def train_model():
+    print('Training Model...')
+    pass 
+
 def visualize_data(ticker, curated_data):
     print('Visualizing Data...')
     FData_object = curated_data[0]

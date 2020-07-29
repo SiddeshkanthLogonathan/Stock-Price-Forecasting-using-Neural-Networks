@@ -2,6 +2,9 @@ import pandas as pd
 import torch
 import plotly.graph_objects as go
 
+## TODO: Make subplots for training and testing
+
+## TODO: Combines train and test for features and labels
 class FinancialDataBuilder:
 
     def __init__(self, training_data, dataframe):
@@ -21,7 +24,7 @@ class FinancialDataBuilder:
     def get_dataframe(self):
         return self.final_dataframe
 
-
+## TODO: on hardcoding which dimension to be plotted
 class FinancialDataVisualizer:
 
     def __init__(self, training_data, FData_object):
