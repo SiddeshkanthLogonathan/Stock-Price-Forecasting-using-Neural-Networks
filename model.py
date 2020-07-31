@@ -2,7 +2,7 @@ from d2l import torch as d2l
 import torch
 import torch.nn as nn
 from data_preprocessing import FinancialDataLoader, FinancialDataIterator
-from data_visualization import FinancialDataVisualizer
+from data_visualization import FinancialDataVisualizer, FinancialDataBuilder
 
 data = FinancialDataLoader('NCLH')
 data_tensor = data.as_tensor_list()
@@ -50,6 +50,28 @@ def train_net(net, train_iter, loss, epochs, lr):
 net = get_net(input_size=tau)
 # print(net)
 
-# trained_data = torch.cat((data[0:tau], net(features)), dim=0)
-# data_visualizer = FinancialDataVisualizer(trained_data.detach().numpy(), data)
+
+def as_tensor_list(data):
+    storage = torch.zeros(len(data), dtype=torch.float32)
+    for i in range(len(storage)):
+        storage[i] = data[i]
+    return storage
+
+
+train_net(net, train_iter, loss, 50, 0.01)
+X = as_tensor_list(net(train_feature).detach())
+y = as_tensor_list(net(test_feature).detach())
+
+
+
+# print(X)
+# print(y)
+
+
+# data_visualizer = FinancialDataVisualizer(data, (X, y), tau)
 # data_visualizer.visualize('NCLH')
+
+d_b = FinancialDataVisualizer(initial_data=data.get_dataset(), model_data=(X, y), tau=tau)
+d_v.visualize('NCLH')
+# print(d_b.train_df)
+# print(d_b.test_df)
