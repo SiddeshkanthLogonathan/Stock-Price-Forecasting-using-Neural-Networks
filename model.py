@@ -8,7 +8,7 @@ data = FinancialDataLoader('NCLH')
 data_tensor = data.as_tensor_list()
 
 T = len(data) 
-tau = 2
+tau = 4
 
 data_i = FinancialDataIterator(data_tensor, tau=tau)
 train_data = data_i.partition_data(is_train=True)
@@ -58,20 +58,19 @@ def as_tensor_list(data):
     return storage
 
 
-train_net(net, train_iter, loss, 50, 0.01)
+train_net(net, train_iter, loss, 10, 0.01)
 X = as_tensor_list(net(train_feature).detach())
 y = as_tensor_list(net(test_feature).detach())
 
 
 
-# print(X)
-# print(y)
+print(X.shape)
+# print(len(data.get_dataset().iloc[tau-1: len(X)+1]))
+print(round(0.7 * len(data)))
+print(y.shape)
+print(round(0.3 * len(data)))
+# print(len(data.get_dataset().iloc[len(X)+tau+2:]))
+print(len(data))
 
-
-# data_visualizer = FinancialDataVisualizer(data, (X, y), tau)
-# data_visualizer.visualize('NCLH')
-
-d_b = FinancialDataVisualizer(initial_data=data.get_dataset(), model_data=(X, y), tau=tau)
-d_v.visualize('NCLH')
-# print(d_b.train_df)
-# print(d_b.test_df)
+# d_b = FinancialDataVisualizer(initial_data=data.get_dataset(), model_data=(X, y), tau=tau)
+# d_v.visualize('NCLH')
