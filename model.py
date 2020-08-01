@@ -58,19 +58,9 @@ def as_tensor_list(data):
     return storage
 
 
-train_net(net, train_iter, loss, 10, 0.01)
-X = as_tensor_list(net(train_feature).detach())
-y = as_tensor_list(net(test_feature).detach())
+train_net(net, train_iter, loss, 1000, 0.01)
+X = net(train_feature).detach()
+y = net(test_feature).detach()
 
-
-
-print(X.shape)
-# print(len(data.get_dataset().iloc[tau-1: len(X)+1]))
-print(round(0.7 * len(data)))
-print(y.shape)
-print(round(0.3 * len(data)))
-# print(len(data.get_dataset().iloc[len(X)+tau+2:]))
-print(len(data))
-
-# d_b = FinancialDataVisualizer(initial_data=data.get_dataset(), model_data=(X, y), tau=tau)
-# d_v.visualize('NCLH')
+f_v = FinancialDataVisualizer(df_index=data.get_dataset().index, data=data, model_data=(X, y), tau=tau)
+f_v.visualize('NCLH')
