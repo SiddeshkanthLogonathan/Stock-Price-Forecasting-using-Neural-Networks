@@ -4,14 +4,9 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
 
-## TODO: Make subplots for training and testing
-
-## TODO: Combines train and test for features and labels
 class FinancialDataBuilder:
 
     def __init__(self, df_index, data, model_data, tau):
-        # print(data[tau:len(train_label) + tau] == train_label)
-        # print(data[len(train_label) + 2*tau:] == test_label)
         train_data = model_data[0]
         test_data = model_data[1]
 
@@ -60,13 +55,12 @@ class FinancialDataVisualizer:
         self.beautify_plot(fig, title)
         fig.show()
 
-
     def beautify_plot(self, fig, title):
         fig.update_layout(
             title=title + ' Pricing', 
             xaxis_title='Date', 
             yaxis_title='Price ($)', 
-            legend_title='*',
+            legend_title='Legend',
             font=dict(
                 family="Courier New, Monospace",
                 size=18,

@@ -3,26 +3,45 @@ from data_visualization import FinancialDataBuilder, FinancialDataVisualizer
 import argparse as arg
 import sys
 
-def process_data(ticker):
+def process_data(ticker, tau):
     print('Processing Data...')
-    FData = FinancialDataLoader(ticker)
-    data_iter = FinancialDataIterator(FData, tau=2)
-    train_iter = data_iter.partition_data(is_train=True)
-    test_iter = data_iter.partition_data(is_train=False)
-    return FData, train_iter, test_iter
+    data = FinancialDataLoader('NCLH')
+    data_tensor = data.as_tensor_list()
 
-def train_model():
-    print('Training Model...')
-    pass 
+    data_i = FinancialDataIterator(data_tensor, tau=tau)
+    train_data = data_i.partition_data(is_train=True)
+    test_data = data_i.partition_data(is_train=False)
 
-def visualize_data(ticker, curated_data):
-    print('Visualizing Data...')
-    FData_object = curated_data[0]
-    train_data = curated_data[1]
-    test_data = curated_data[2]
+    train_feature, train_label = data_i.prepare_data(torch_data=train_data)
+    test_feature, test_label = data_i.prepare_data(torch_data=test_data)
 
-    data_visualizer = FinancialDataVisualizer(train_data, test_data, FData_object)
-    data_visualizer.visualize(title=ticker)
+    return train_feature, train_label, test_feature, test_label
+
+def prepare_model(curated_data, batch_size, tau):
+    print('Preparing Model...')
+    train_iter = d2l.load_array((curated_data[0], curated_data[1]), batch_size, is_train=True)
+    test_iter = d2l.load_array((curated_data[2], curated_data[3]), batch_size, is_train=False)
+
+    net = get_net(input_size=tau)
+    return train_iter, test_iter, net
+
+def train_model(net, train_iter, num_epochs, lr):
+    print('Training...')
+    loss = nn.MSELoss()
+    train_net(net, train_iter, loss, num_epochs, lr)
+    return net
+
+def finalizing_build(net, train_feature, test_feature):
+    print('Finalizing build...')
+    X = net(train_feature).detach()
+    y = net(test_feature).detach()
+
+    return X, y
+
+def visualize(df_index, data, model_data, tau, title)
+    print('Visualizing data...')
+    f_v = FinancialDataVisualizer(df_index=df_index, data=data, model_data=model_data, tau=tau)
+    f_v.visualize(title)
 
 def main():
     ERROR_MESSAGE = 'Error: Please enter a ticker symbol. (ex: --ticker FB)'
@@ -35,7 +54,8 @@ def main():
     if ticker == None:
         sys.stdout.write(ERROR_MESSAGE + '\n')
         sys.exit(25)
-    curated_data = process_data(ticker=ticker)
+    curated_data = process_data(ticker, tau=4)
+    
 
 
 

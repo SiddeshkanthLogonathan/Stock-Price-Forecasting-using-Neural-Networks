@@ -48,17 +48,15 @@ def train_net(net, train_iter, loss, epochs, lr):
         print(f'    epoch {epoch}, loss: {d2l.evaluate_loss(net, train_iter, loss):f}')
 
 net = get_net(input_size=tau)
-# print(net)
+
+# def as_tensor_list(data):
+#     storage = torch.zeros(len(data), dtype=torch.float32)
+#     for i in range(len(storage)):
+#         storage[i] = data[i]
+#     return storage
 
 
-def as_tensor_list(data):
-    storage = torch.zeros(len(data), dtype=torch.float32)
-    for i in range(len(storage)):
-        storage[i] = data[i]
-    return storage
-
-
-train_net(net, train_iter, loss, 1000, 0.01)
+train_net(net, train_iter, loss, 2000, 0.01)
 X = net(train_feature).detach()
 y = net(test_feature).detach()
 
