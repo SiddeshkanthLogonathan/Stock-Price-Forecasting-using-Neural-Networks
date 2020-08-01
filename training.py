@@ -1,4 +1,6 @@
-import torch 
+import torch
+from d2l import torch as d2l
+
 
 def train_net(net, train_iter, loss, epochs, lr):
     trainer = torch.optim.Adam(net.parameters(), lr)
@@ -8,5 +10,4 @@ def train_net(net, train_iter, loss, epochs, lr):
             l = loss(net(X), y)
             l.backward()
             trainer.step()
-        print(f'epoch {epoch}, '
-              f'loss: {d2l.evaluate_loss(net, train_iter, loss):f}')
+        print(f'    epoch {epoch}, loss: {d2l.evaluate_loss(net, train_iter, loss):f}')
