@@ -50,6 +50,10 @@ def main():
     X = net(train_feature).detach()
     y = net(test_feature).detach() 
 
+    last_four_days = test_feature[-1]
+    price_of_tommorow = net(last_four_days)
+    print('Next day closing price: ' + str(price_of_tommorow.detach().numpy()))
+
     print('Visualizing Data...')
     data_visualizer = FinancialDataVisualizer(df_index=data.get_dataset().index, data=data, model_data=(X, y), tau=TAU)
     data_visualizer.visualize(title=ticker)
