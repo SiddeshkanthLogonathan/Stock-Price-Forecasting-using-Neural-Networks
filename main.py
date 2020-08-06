@@ -8,8 +8,15 @@ from d2l import torch as d2l
 import torch
 import torch.nn as nn
 
+def process_data(data_iterator, data_tensor):
+    train_data = data_iterator.partition_data(is_train=True)
+    test_data = data_iterator.partition_data(is_train=False)
+
+    return train_data, test_data
+
 def main():
     ERROR_MESSAGE = 'Error: Please enter a ticker symbol. (ex: --ticker FB)'
+    TAU, BATCH_SIZE = 4, 128
 
     parser = arg.ArgumentParser()
     parser.add_argument('--ticker', nargs='?', default=None)
@@ -20,30 +27,19 @@ def main():
         sys.stdout.write(ERROR_MESSAGE + '\n')
         sys.exit(25)
 
-    ## ========================================================================= 
-
     print('Processing Data...')
     data = FinancialDataLoader(ticker=ticker)
     data_tensor = data.as_tensor_list()
+    data_iterator = FinancialDataIterator(data_tensor=data_tensor, tau=TAU)
 
-    tau = 4
-    data_i = FinancialDataIterator(data_tensor, tau=tau)
-    train_data = data_i.partition_data(is_train=True)
-    test_data = data_i.partition_data(is_train=False)
-
-    train_feature, train_label = data_i.prepare_data(torch_data=train_data)
-    test_feature, test_label = data_i.prepare_data(torch_data=test_data)
-
-    ## ========================================================================= 
+    train_data, test_data = process_data(data_iterator=data_iterator, data_tensor=data_tensor)
+    train_feature, train_label = data_iterator.prepare_data(torch_data=train_data)
+    test_feature, test_label = data_iterator.prepare_data(torch_data=test_data)
 
     print('Preparing Model...')
-    batch_size = 128
-    train_iter = d2l.load_array((train_feature, train_label), batch_size, is_train=True)
-    test_iter = d2l.load_array((test_feature, test_label), batch_size, is_train=False)
-
-    net = model.get_net(input_size=tau)
-
-    ## ========================================================================= 
+    train_iter = d2l.load_array((train_feature, train_label), BATCH_SIZE, is_train=True)
+    test_iter = d2l.load_array((test_feature, test_label), BATCH_SIZE, is_train=False)
+    net = model.get_net(input_size=TAU)
 
     print('Training...')
     loss = nn.MSELoss()
@@ -51,16 +47,12 @@ def main():
     lr = 0.01
     training.train_net(net, train_iter, loss, num_epochs, lr)
 
-    ## ========================================================================= 
-
     X = net(train_feature).detach()
     y = net(test_feature).detach() 
 
-    ## ========================================================================= 
     print('Visualizing Data...')
-    f_v = FinancialDataVisualizer(df_index=data.get_dataset().index, data=data, model_data=(X, y), tau=tau)
-    f_v.visualize(title=ticker)
-
+    data_visualizer = FinancialDataVisualizer(df_index=data.get_dataset().index, data=data, model_data=(X, y), tau=TAU)
+    data_visualizer.visualize(title=ticker)
 
 if __name__ == '__main__':
     main()
