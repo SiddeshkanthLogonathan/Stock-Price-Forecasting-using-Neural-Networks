@@ -3,7 +3,6 @@ from torch.utils.data import Dataset, DataLoader
 import torch 
 import numpy as np
 
-# implement the preparation here: Tau and all
 class FinancialDataLoader(Dataset):
     COLUMNS_TO_DROP = ['Open', 'Volume', 'High', 'Low', 'Adj Close']
     COLUMNS_TO_NORMALIZE = ['Volume']
