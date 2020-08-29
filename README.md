@@ -23,4 +23,4 @@ In the main directory, execute the program with: `python(3) main.py --ticker (IN
 
 # Data 
 
-The data is queried real time from [yahoo finance](https://finance.yahoo.com/) using DataReader and is not stored locally.
+The data is queried real time from [yahoo finance](https://finance.yahoo.com/) using yfinance and is not stored locally.

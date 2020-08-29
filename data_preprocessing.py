@@ -1,15 +1,14 @@
-from pandas_datareader import data as wb
+import yfinance as yf
 from torch.utils.data import Dataset, DataLoader
 import torch 
 import numpy as np
 
+## TODO: FinancialDataLoader has to be generic enough for fundamental and alternative data. 
+
 class FinancialDataLoader(Dataset):
-    COLUMNS_TO_DROP = ['Open', 'Volume', 'High', 'Low', 'Adj Close']
-    COLUMNS_TO_NORMALIZE = ['Volume']
 
     def __init__(self, ticker):
         self.dataset = self.query_data(ticker=ticker)
-        self.drop_unnecessary_columns()
 
     def __len__(self):
         return len(self.dataset.index)
@@ -18,19 +17,23 @@ class FinancialDataLoader(Dataset):
         return torch.tensor(self.dataset.values[idx], dtype=torch.float32)
 
     def query_data(self, ticker):
-        return wb.DataReader(ticker, data_source='yahoo')
+        return yf.download(
+            tickers=ticker, 
+            period ='max', 
+            interval='1d', 
+            auto_adjust=True, 
+            prepost = True, 
+            threads = True,
+            proxy = None)
 
-    def drop_unnecessary_columns(self):
-        self.dataset.drop(self.COLUMNS_TO_DROP, axis=1, inplace=True)
+    def drop_unnecessary_columns(self, droppable_columns):
+        self.dataset.drop(droppable_columns, axis=1, inplace=True)
 
     def as_tensor_list(self):
         storage = torch.zeros(len(self), dtype=torch.float32)
         for i in range(len(storage)):
             storage[i] = self[i]
         return storage
-
-    def normalize_columns(self):
-        pass
 
     def get_dataset(self):
         return self.dataset

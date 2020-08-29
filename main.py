@@ -8,6 +8,8 @@ from d2l import torch as d2l
 import torch
 import torch.nn as nn
 
+## TODO: to be able to run different nn to based on a selection or a mapping strategy.
+
 def process_data(data_iterator, data_tensor):
     train_data = data_iterator.partition_data(is_train=True)
     test_data = data_iterator.partition_data(is_train=False)
@@ -29,6 +31,7 @@ def main():
 
     print('Processing Data...')
     data = FinancialDataLoader(ticker=ticker)
+    data.drop_unnecessary_columns(droppable_columns=['Open', 'Volume', 'High', 'Low'])
     data_tensor = data.as_tensor_list()
     data_iterator = FinancialDataIterator(data_tensor=data_tensor, tau=TAU)
 

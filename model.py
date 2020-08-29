@@ -11,3 +11,6 @@ def get_net(input_size):
                         nn.Linear(10, 1))
     net.apply(init_weights)
     return net
+
+
+## Add more neural networks here for different analysis evaluations

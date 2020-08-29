@@ -1,6 +1,6 @@
 torch
 numpy
-pandas_datareader
+yfinance
 argparse
 d2l
 plotly
